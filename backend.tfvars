@@ -1,4 +1,5 @@
-bucket               = "ep-eks-iac-state-store"
-key                  = "ep-iac.json"
+bucket               = "ep-eks-state-store"
+key                  = "terraform.tfstate"
 region               = "us-east-1"
 workspace_key_prefix = "environment"
+dynamodb_table       = "ep-eks-state-lock"
