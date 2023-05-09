@@ -4,7 +4,7 @@ provider "kubectl" {
   load_config_file          = false
 
   exec {
-    api_version = "client.authentification.k8s.io/v1beta1"
+    api_version = "client.authentication.k8s.io/v1beta1"
     args        = ["eks","get-token","--cluster-name", data.aws_eks_cluster.default.id]
     command     = "aws"
   }
@@ -179,7 +179,7 @@ resource "kubectl_manifest" "deployment" {
                 type: RuntimeDefault
             serviceAccountName: cluster-autoscaler
             containers:
-              - image: registry.k8s.io/autoscaling/cluster-autoscaler:v1.22.2
+              - image: registry.k8s.io/autoscaling/cluster-autoscaler:v1.26.2
                 name: cluster-autoscaler
                 resources:
                   limits:
@@ -195,7 +195,7 @@ resource "kubectl_manifest" "deployment" {
                   - --cloud-provider=aws
                   - --skip-nodes-with-local-storage=false
                   - --expander=least-waste
-                  - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/<YOUR CLUSTER NAME>
+                  - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/ep-eks-cluster
                 volumeMounts:
                   - name: ssl-certs
                     mountPath: /etc/ssl/certs/ca-certificates.crt #/etc/ssl/certs/ca-bundle.crt for Amazon Linux Worker Nodes

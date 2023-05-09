@@ -1,9 +1,8 @@
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "19.0"
+  version = "~> 19.0"
 
   cluster_name      = var.cluster_name
-  cluster_version   = var.cluster_version
 
   # https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html
   cluster_endpoint_private_access = var.cluster_endpoint_private_access

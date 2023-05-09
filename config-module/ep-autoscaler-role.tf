@@ -4,11 +4,11 @@ module "cluster_autoscaler_irsa_role" {
 
   role_name                         = "cluster-autoscaler"
   attach_cluster_autoscaler_policy  = true
-  cluster_autoscaler_cluster_ids    = [module.eks.cluster_id]
+  cluster_autoscaler_cluster_ids    = [module.eks.cluster_name]
 
   oidc_providers = {
     ex = {
-      provider_arn                  = module.eks.oids_provider_arn
+      provider_arn                  = module.eks.oidc_provider_arn
       namespace_service_accounts    = ["kube-system:cluster-autoscaler"]
     }
   }
