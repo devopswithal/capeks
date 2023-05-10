@@ -131,10 +131,12 @@ module "eks" {
       cidr_blocks      = ["10.0.0.0/16"]
     }
     egress_all = {
-      description      = "Node all egress"
-      protocol         = "-1"
-      type             = "egress"
-      cidr_blocks      = ["0.0.0.0/0"]
+      description = "Node all egress"
+      protocol    = "-1"
+      from_port   = 22
+      to_port     = 22
+      type        = "egress"
+      cidr_blocks = ["0.0.0.0/0"]
     }
 
 
@@ -146,7 +148,7 @@ module "eks" {
     "k8s.io/cluster-autoscaler/${local.eks_cluster_name}" = "owned"
     "k8s.io/cluster-autoscaler/enabled" = "TRUE"
   }
-
+}
 
 /*data "aws_eks_cluster" "default" {
   name = module.eks.cluster_name

@@ -11,16 +11,10 @@ terraform {
     workspace_key_prefix = "environment"
     dynamodb_table = "ep-eks-state-lock"
   }
-
   required_providers {
-    kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = ">= 1.14.0"
-    }
     helm = {
       source  = "hashicorp/helm"
       version = ">= 2.9.0"
     }
-
   }
 }

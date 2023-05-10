@@ -7,7 +7,7 @@ terraform {
   backend "s3" {
     bucket = "ep-eks-state-store"
     key    = "ebs-storage/"
-    region = var.aws_region
+    region = "us-east-1"
     workspace_key_prefix = "environment"
     dynamodb_table = "ep-ebs-storage-lock"
   }
@@ -25,6 +25,6 @@ data "terraform_remote_state" "eks" {
   config = {
     bucket = "ep-eks-state-store"
     key    = "tfstate/terraform.tfstate"
-    region = var.aws_region
+    region = "us-east-1"
   }
 }
