@@ -7,7 +7,7 @@ module "ebs_csi_irsa_role" {
 
   oidc_providers = {
     ex = {
-      provider_arn               = data.terraform_remote_state.eks.outputs.oidc_provider_arn
+      provider_arn               = data.terraform_remote_state.eks.outputs.cluster_oidc_provider_arn
       namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
     }
   }
@@ -23,7 +23,7 @@ module "cluster_autoscaler_irsa_role" {
 
   oidc_providers = {
     ex = {
-      provider_arn                  = data.terraform_remote_state.eks.outputs.oidc_provider_arn
+      provider_arn                  = data.terraform_remote_state.eks.outputs.cluster_oidc_provider_arn
       namespace_service_accounts    = ["kube-system:cluster-autoscaler"]
     }
   }
@@ -38,7 +38,7 @@ module "load_balancer_controller_irsa_role" {
 
   oidc_providers = {
     ex = {
-      provider_arn               = data.terraform_remote_state.eks.outputs.oidc_provider_arn
+      provider_arn               = data.terraform_remote_state.eks.outputs.cluster_oidc_provider_arn
       namespace_service_accounts = ["kube-system:aws-load-balancer-controller"]
     }
   }

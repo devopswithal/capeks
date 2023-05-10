@@ -1,5 +1,4 @@
 bucket               = "ep-eks-state-store"
 key                  = "ebs-storage/terraform.tfstate"
 region               = "us-east-1"
-workspace_key_prefix = "environment"
 dynamodb_table       = "ep-ebs-storage-lock"

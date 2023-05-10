@@ -19,5 +19,5 @@ variable "environment" {
 variable "business_divsion" {
   description = "Business Division who owns this Infrastructure"
   type = string
-  default = "Sales"
+  default = "sales"
 }
