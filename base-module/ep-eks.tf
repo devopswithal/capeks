@@ -2,7 +2,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 19.0"
 
-  cluster_name      = var.cluster_name
+  cluster_name = local.eks_cluster_name
 
   # https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
@@ -50,6 +50,12 @@ module "eks" {
         role = "ep_mgr"
       }
 
+      iam_role_additional_policies = {
+        AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+        AutoScalingFullAccess = "arn:aws:iam::aws:policy/AutoScalingFullAccess"
+        ElasticLoadBalancingFullAccess = "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess"
+      }
+
       key_name = aws_key_pair.ep_eks_key.key_name
 
       instance_types = ["t3.small"]
@@ -69,11 +75,11 @@ module "eks" {
         role = "ep_wkr"
       }
 
-      taints = [{
-        key    = "market"
-        value  = "spot"
-        effect = "NO_SCHEDULE"
-      }]
+      iam_role_additional_policies = {
+        AmazonEBSCSIDriverPolicy = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+        AutoScalingFullAccess = "arn:aws:iam::aws:policy/AutoScalingFullAccess"
+        ElasticLoadBalancingFullAccess = "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess"
+      }
 
       key_name = aws_key_pair.ep_eks_key.key_name
 
@@ -127,8 +133,6 @@ module "eks" {
     egress_all = {
       description      = "Node all egress"
       protocol         = "-1"
-      from_port        = 0
-      to_port          = 0
       type             = "egress"
       cidr_blocks      = ["0.0.0.0/0"]
     }
@@ -136,11 +140,15 @@ module "eks" {
 
   }
 
-  tags = local.common_tags
-}
+  tags = {
+    owners = local.owners
+    environment = local.environment
+    "k8s.io/cluster-autoscaler/${local.eks_cluster_name}" = "owned"
+    "k8s.io/cluster-autoscaler/enabled" = "TRUE"
+  }
 
-/*
-data "aws_eks_cluster" "default" {
+
+/*data "aws_eks_cluster" "default" {
   name = module.eks.cluster_name
 }
 

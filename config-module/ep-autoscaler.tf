@@ -1,4 +1,49 @@
-provider "kubectl" {
+# Install Cluster Autoscaler using HELM
+
+# Resource: Helm Release
+resource "helm_release" "cluster_autoscaler_release" {
+  name       = "${local.name}-cluster-autoscaler"
+
+  repository = "https://kubernetes.github.io/autoscaler"
+  chart      = "cluster-autoscaler"
+
+  namespace = "kube-system"
+
+  set {
+    name  = "cloudProvider"
+    value = "aws"
+  }
+
+  set {
+    name  = "autoDiscovery.clusterName"
+    value = data.terraform_remote_state.eks.outputs.cluster_name
+  }
+
+  set {
+    name  = "awsRegion"
+    value = var.aws_region
+  }
+
+  set {
+    name  = "rbac.serviceAccount.create"
+    value = "true"
+  }
+
+  set {
+    name  = "rbac.serviceAccount.name"
+    value = "cluster-autoscaler"
+  }
+
+  set {
+    name  = "rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = module.cluster_autoscaler_irsa_role.iam_role_arn
+  }
+
+}
+
+
+/* # Install Using Kubectl and YAML Manifests
+  provider "kubectl" {
   host                      = data.aws_eks_cluster.default.endpoint
   cluster_ca_certificate    = base64decode(data.aws_eks_cluster.default.certificate_authority[0].data)
   load_config_file          = false
@@ -213,3 +258,4 @@ resource "kubectl_manifest" "deployment" {
                   path: "/etc/ssl/certs/ca-bundle.crt"
       EOF
 }
+*/

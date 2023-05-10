@@ -6,21 +6,25 @@ provider "aws" {
 terraform {
   backend "s3" {
     bucket = "ep-eks-state-store"
-    key    = "tfstate/terraform.tfstate"
-    region = "us-east-1"
+    key    = "ebs-storage/"
+    region = var.aws_region
     workspace_key_prefix = "environment"
-    dynamodb_table = "ep-eks-state-lock"
+    dynamodb_table = "ep-ebs-storage-lock"
   }
 
   required_providers {
-    kubectl = {
-      source  = "gavinbunney/kubectl"
-      version = ">= 1.14.0"
-    }
     helm = {
       source  = "hashicorp/helm"
       version = ">= 2.9.0"
     }
+  }
+}
 
+data "terraform_remote_state" "eks" {
+  backend = "s3"
+  config = {
+    bucket = "ep-eks-state-store"
+    key    = "tfstate/terraform.tfstate"
+    region = var.aws_region
   }
 }

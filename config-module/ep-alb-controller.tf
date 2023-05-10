@@ -1,22 +1,6 @@
-module "aws_load_balancer_controller_irsa_role" {
-  source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "5.18.0"
-
-  role_name = "aws-load-balancer-controller"
-
-  attach_load_balancer_controller_policy = true
-
-  oidc_providers = {
-    ex = {
-      provider_arn               = module.eks.oidc_provider_arn
-      namespace_service_accounts = ["kube-system:aws-load-balancer-controller"]
-    }
-  }
-}
-
 # https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html
 resource "helm_release" "aws_load_balancer_controller" {
-  name = "aws-load-balancer-controller"
+  name = "${local.name}-aws-load-balancer-controller"
 
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
@@ -30,7 +14,7 @@ resource "helm_release" "aws_load_balancer_controller" {
 
   set {
     name  = "clusterName"
-    value = module.eks.cluster_name
+    value = data.terraform_remote_state.eks.outputs.cluster_name
   }
 
   set {
@@ -40,6 +24,6 @@ resource "helm_release" "aws_load_balancer_controller" {
 
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = module.aws_load_balancer_controller_irsa_role.iam_role_arn
+    value = module.load_balancer_controller_irsa_role.iam_role_arn
   }
 }
