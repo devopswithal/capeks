@@ -48,6 +48,17 @@ module "cluster_admin_iam_user" {
   force_destroy = true
 }
 
+module "cluster_admin_iam_user" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-user"
+  version = "5.3.1"
+
+  name                          = "user1"
+  create_iam_access_key         = false
+  create_iam_user_login_profile = false
+
+  force_destroy = true
+}
+
 module "allow_assume_eks_admins_iam_policy" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-policy"
   version = "5.3.1"
